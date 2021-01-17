@@ -115,14 +115,22 @@ async function buildTextStack(keyword, stack) {
     senseIndex = pickDefinition(randomWord)
     stack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
     stack.layoutVertically()
-    // "furigana" / reading
-    reading = stack.addText(randomWord.japanese[0].reading)
+    const [readingText, wordText, englishText] = ((word, sense) => {
+        if(word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
+            return [word.senses[sense].english_definitions[0],
+                    word.japanese[0].word,
+                    'Wikipedia definition']
+        } else {
+            return [word.japanese[0].reading,
+                    word.japanese[0].word ? word.japanese[0].word : word.slug,
+                    word.senses[sense].english_definitions.join('; ')]
+        } //TODO might need more cases depending on what searches users do
+    })(randomWord, senseIndex)
+    reading = stack.addText(readingText)
     reading.font = Font.footnote()
-    // word in Japanese or its slug (search key) if it's katakana
-    word = stack.addText(randomWord.japanese[0].word ? randomWord.japanese[0].word : randomWord.slug)
+    word = stack.addText(wordText)
     word.font = Font.title2()
-    // chosen english definition(s)
-    stack.addText(randomWord.senses[senseIndex].english_definitions.join('; '))
+    stack.addText(englishText)
 }
 async function fetchRandomWord(keyword) {
     if(wordCache.length > 0) return wordCache.pop()
