@@ -24,28 +24,28 @@ Script.complete()
 async function createWidget() {
 
     // Adjust colors here if you'd like:
-    const UPPER_LEFT_COLORS = { 
-        light: '#fadbd9',
+    const UPPER_LEFT_COLORS = {
+        light: '#ef8a9c',
         dark: '#393939'
     }
-    const UPPER_RIGHT_COLORS = { 
-        light: '#d9fadb',
+    const UPPER_RIGHT_COLORS = {
+        light: '#cfef8a',
         dark: '#ff5a09'
     }
-    const BOTTOM_LEFT_COLORS = { 
-        light: '#faebd9',
+    const BOTTOM_LEFT_COLORS = {
+        light: '#ab8aef',
         dark: '#00303f'
     }
-    const BOTTOM_RIGHT_COLORS = { 
-        light: '#f8fad9',
+    const BOTTOM_RIGHT_COLORS = {
+        light: '#8aefdd',
         dark: '#7a9d96'
     }
 
     let w = new ListWidget()
-    
+
     let keyword = args.widgetParameter || '#jlpt-n1'
-    
-    
+
+
     const BOX_WIDTH = (widgetFamily => {
         switch (widgetFamily) {
             case 'small':
@@ -74,34 +74,34 @@ async function createWidget() {
     let topRow = w.addStack()
     let upperLeftOuter = topRow.addStack()
     upperLeftOuter.centerAlignContent()
-    upperLeftOuter.setPadding(4,4,4,4)
-    upperLeftOuter.size = new Size(BOX_WIDTH,BOX_HEIGHT)
+    upperLeftOuter.setPadding(4, 4, 4, 4)
+    upperLeftOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
     upperLeftOuter.backgroundColor = Color.dynamic(new Color(UPPER_LEFT_COLORS.light), new Color(UPPER_LEFT_COLORS.dark))
     await buildTextStack(keyword, upperLeftOuter.addStack())
-    
+
     // only added if running in medium/large mode, second word
     if (config.widgetFamily === 'medium' || config.widgetFamily === 'large') {
         let upperRightOuter = topRow.addStack()
         upperRightOuter.backgroundColor = Color.dynamic(new Color(UPPER_RIGHT_COLORS.light), new Color(UPPER_RIGHT_COLORS.dark))
-        upperRightOuter.setPadding(4,4,4,4)
+        upperRightOuter.setPadding(4, 4, 4, 4)
         upperRightOuter.centerAlignContent()
-        upperRightOuter.size = new Size(BOX_WIDTH,BOX_HEIGHT)
+        upperRightOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
         await buildTextStack(keyword, upperRightOuter.addStack())
-        
+
     }
     // only added if running in large mode, third and fourth words
     if (config.widgetFamily === 'large') {
         let bottomRow = w.addStack()
         let bottomLeftOuter = bottomRow.addStack()
         bottomLeftOuter.centerAlignContent()
-        bottomLeftOuter.setPadding(4,4,4,4)
-        bottomLeftOuter.size = new Size(BOX_WIDTH,BOX_HEIGHT)
+        bottomLeftOuter.setPadding(4, 4, 4, 4)
+        bottomLeftOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
         bottomLeftOuter.backgroundColor = Color.dynamic(new Color(BOTTOM_LEFT_COLORS.light), new Color(BOTTOM_LEFT_COLORS.dark))
         await buildTextStack(keyword, bottomLeftOuter.addStack())
         let bottomRightOuter = bottomRow.addStack()
         bottomRightOuter.centerAlignContent()
-        bottomRightOuter.setPadding(4,4,4,4)
-        bottomRightOuter.size = new Size(BOX_WIDTH,BOX_HEIGHT)
+        bottomRightOuter.setPadding(4, 4, 4, 4)
+        bottomRightOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
         bottomRightOuter.backgroundColor = Color.dynamic(new Color(BOTTOM_RIGHT_COLORS.light), new Color(BOTTOM_RIGHT_COLORS.dark))
         await buildTextStack(keyword, bottomRightOuter.addStack())
     }
@@ -116,14 +116,14 @@ async function buildTextStack(keyword, stack) {
     stack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
     stack.layoutVertically()
     const [readingText, wordText, englishText] = ((word, sense) => {
-        if(word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
+        if (word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
             return [word.senses[sense].english_definitions[0],
-                    word.japanese[0].word,
-                    'Wikipedia definition']
+            word.japanese[0].word,
+                'Wikipedia definition']
         } else {
             return [word.japanese[0].reading,
-                    word.japanese[0].word ? word.japanese[0].word : word.slug,
-                    word.senses[sense].english_definitions.join('; ')]
+            word.japanese[0].word ? word.japanese[0].word : word.slug,
+            word.senses[sense].english_definitions.join('; ')]
         } //TODO might need more cases depending on what searches users do
     })(randomWord, senseIndex)
     reading = stack.addText(readingText)
@@ -133,7 +133,7 @@ async function buildTextStack(keyword, stack) {
     stack.addText(englishText)
 }
 async function fetchRandomWord(keyword) {
-    if(wordCache.length > 0) return wordCache.pop()
+    if (wordCache.length > 0) return wordCache.pop()
 
     const APPROX_MAX_PAGES = (searchKey => {
         switch (searchKey) {
@@ -161,35 +161,48 @@ async function fetchRandomWord(keyword) {
             // TODO: completely rewrite once jisho api returns max pages for a search result
             const randomPg = i === 5 ? 1 : (1 + Math.floor((Math.random() * APPROX_MAX_PAGES) / i))
             let r = new Request("https://jisho.org/api/v1/search/words?keyword=" + encodeURIComponent(keyword) + "&page=" + randomPg)
-            
             const json = await r.loadJSON()
             if (json.data.length > 0) {
                 randomIndexes = []
-                while(randomIndexes.length < json.data.length) {
+                while (randomIndexes.length < json.data.length) {
                     const c = Math.floor(Math.random() * json.data.length)
-                    if(randomIndexes.indexOf(c) === -1) randomIndexes.push(c);
-                } 
-            
-                while(randomIndexes.length > 0) {
+                    if (randomIndexes.indexOf(c) === -1) randomIndexes.push(c);
+                }
+
+                while (randomIndexes.length > 0) {
                     wordCache.push(json.data[randomIndexes.pop()])
-                }   
+                }
+                // store words to file in case next run is offline
+                let fm = FileManager.iCloud()
+                let offlinePath = fm.joinPath(fm.documentsDirectory(), 'Random Jisho Words')
+                if(!fm.fileExists(offlinePath)) {
+                    fm.createDirectory(offlinePath)
+                }
+                fm.writeString(fm.joinPath(offlinePath, ('words-' + keyword + '.json')), JSON.stringify(wordCache))
                 return wordCache.pop()
             } else {
-                throw Error('Data was not populated, empty page?')
+                throw Error('Data was not populated, empty page and no file?')
             }
-        } catch { }
+        } catch { /* nothing, used for retries */ }
+    }
+    // might be offline, try loading from file
+    let fm = FileManager.iCloud()
+    let offlinePath = fm.joinPath(fm.documentsDirectory(), 'Random Jisho Words')
+    wordCache = JSON.parse(fm.readString(fm.joinPath(offlinePath, ('words-' + keyword + '.json'))))
+    if(wordCache && wordCache.length > 0) {
+        return wordCache.pop()
     }
 }
 
 function pickDefinition(randomWord) {
-    if(! randomWord || randomWord.japanese.length === 1 || randomWord.senses.length === 1) {
+    if (!randomWord || randomWord.japanese.length === 1 || randomWord.senses.length === 1) {
         return 0
     }
     // looking at examples, it seems like the best picks are words with multiple english definitions
-    for(i = 0; i<randomWord.senses.length; i++) {
-        if(randomWord.senses[i].english_definitions.length > 1) {
+    for (i = 0; i < randomWord.senses.length; i++) {
+        if (randomWord.senses[i].english_definitions.length > 1) {
             return i
-        } 
+        }
     }
     return 0
 }
