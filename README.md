@@ -18,5 +18,10 @@ An iOS [Shortcut](https://www.icloud.com/shortcuts/2140d9eaf4cb4b2b80b759e769b6a
 2.  Scroll down and select Scriptable as the app for the widget
 3.  Choose a size (all three are supported) and select ```Add Widget```
 4.  Tap the widget and for Script, select 'Random Jisho Word Widget'
-5.  Under Parameter, enter a jisho.org search string.  Examples: ```#jlpt-n1```, ```#jlpt-n3 #common```, ```manga```.  If not specified, ```#jlpt-n5``` will be used.
+5.  Under Parameter, enter a jisho.org search string.  Examples: ```#jlpt-n1```, ```#jlpt-n3 #common```.  If not specified, ```#jlpt-n5``` will be used.
 
+## Usage
+Feel free to adjust the search at any time by modifying the widget and entering a new Parameter.  If you'd like to resize the widget, it needs to be removed and re-added.
+
+## Acknowledgments
+Many thanks to [MaximiliumM](https://github.com/MaximiliumM) for publishing [this widget](https://github.com/MaximiliumM/JapaneseWidget) which performs a very similar function.  I wanted an app to display a wider variety of words with more open-ended configuration and was able to use their code as a starting point.  I also would like to express gratitude to all of the contributors to jisho.org, including its authors and everyone who curates the data it links us to.  It is a wonderful tool.
