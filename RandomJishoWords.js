@@ -43,7 +43,7 @@ async function createWidget() {
 
     let w = new ListWidget()
 
-    let keyword = args.widgetParameter || '#jlpt-n1'
+    let keyword = args.widgetParameter || '#jlpt-n5'
 
 
     const BOX_WIDTH = (widgetFamily => {
