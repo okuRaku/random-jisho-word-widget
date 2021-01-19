@@ -15,7 +15,7 @@ Installation is done in two steps:  copying the script file to your device and t
 ### Download the script file
 An iOS >[Shortcut](https://www.icloud.com/shortcuts/2140d9eaf4cb4b2b80b759e769b6a26a)< is provided to make this easier.  It will download the latest script content and place it where Scriptable expects it.
 
-| ![Downloading the Shortcut](addShortcut.webp) | ![Running the Shortcut](runShortcut.webp) |
+ ![Downloading the Shortcut](addShortcut.webp) ![Running the Shortcut](runShortcut.webp) 
 
 ### Add a new Widget
 1.  Long press the home screen and tap the ```+``` button.
@@ -24,7 +24,7 @@ An iOS >[Shortcut](https://www.icloud.com/shortcuts/2140d9eaf4cb4b2b80b759e769b6
 4.  Tap the widget and for Script, select 'Random Jisho Word Widget'
 5.  Under Parameter, enter a jisho.org search string.  Examples: ```#jlpt-n1```, ```#jlpt-n3 #common```.  If not specified, ```#jlpt-n5``` will be used.
 
-| ![Adding a small widget](addWidgetSmall.png) | ![Adding a large widget](addWidgetLarge.png) |
+ ![Adding a small widget](addWidgetSmall.png)  ![Adding a large widget](addWidgetLarge.png) 
 
 ## Usage
 Feel free to adjust the search at any time by modifying the widget and entering a new Parameter.  If you'd like to resize the widget, it needs to be removed and re-added.  Colors used can be easily changed by modifying the script content inside Scriptable.
