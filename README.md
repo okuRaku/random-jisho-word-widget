@@ -13,7 +13,7 @@ Installation is done in two steps:  copying the script file to your device and t
 [Scriptable](https://apps.apple.com/us/app/scriptable/id1405459188) must be installed.
 
 ### Download the script file
-An iOS >[Shortcut](https://www.icloud.com/shortcuts/2140d9eaf4cb4b2b80b759e769b6a26a)< is provided to make this easier.  It will download the latest script content and place it where Scriptable expects it.  **Note**:  If you do not want to enable untrusted Shortcuts (necessary for running any shared ones) you can also do this step by manually copying the contents of [RandomJishoWords.js](https://github.com/okuRaku/random-jisho-word-widget/releases/download/current/RandomJishoWords.js) into a new script in Scriptable.
+An iOS >[Shortcut](https://www.icloud.com/shortcuts/9f4188a6ccc5440b82832e2d5bee6ba3)< is provided to make this easier.  It will download the latest script content and place it where Scriptable expects it.  **Note**:  If you do not want to enable untrusted Shortcuts (necessary for running any shared ones) you can also do this step by manually copying the contents of [RandomJishoWords.js](https://github.com/okuRaku/random-jisho-word-widget/releases/download/current/RandomJishoWords.js) into a new script in Scriptable.
 
  ![Downloading the Shortcut](addShortcut.webp) ![Running the Shortcut](runShortcut.webp) 
 
