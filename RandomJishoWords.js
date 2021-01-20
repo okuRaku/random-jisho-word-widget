@@ -113,19 +113,28 @@ async function buildTextStack(keyword, stack) {
     // we propose a heuristic to pick the one most likely to be applicable is the one with 
     // multiple english definitions.  This helps avoid proper names from appearing.  Area for more research.
     senseIndex = pickDefinition(randomWord)
-    stack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
-    stack.layoutVertically()
     const [readingText, wordText, englishText] = ((word, sense) => {
-        if (word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
+        if(!word || !word.senses || !word.senses[sense] 
+            || !word.senses[sense].english_definitions
+            || !word.senses[sense].parts_of_speech
+            || !word.japanese || word.japanese.length === 0) {
+            let placeholder = word? (word.slug || '') : ''
+            return ['',placeholder,'No data available.  Check parameter']
+
+        } else if (word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
             return [word.senses[sense].english_definitions[0],
-            word.japanese[0].word,
-                'Wikipedia definition']
+                    word.japanese[0].word ? word.japanese[0].word : word.japanese[0].reading,
+                    'Wikipedia definition']
         } else {
             return [word.japanese[0].reading,
-            word.japanese[0].word ? word.japanese[0].word : word.slug,
-            word.senses[sense].english_definitions.join('; ')]
+                    word.japanese[0].word ? word.japanese[0].word : word.slug,
+                    word.senses[sense].english_definitions.join('; ')]
         } //TODO might need more cases depending on what searches users do
     })(randomWord, senseIndex)
+    if(randomWord && randomWord.slug) {
+        stack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
+    }
+    stack.layoutVertically()
     reading = stack.addText(readingText)
     reading.font = Font.footnote()
     word = stack.addText(wordText)
@@ -173,7 +182,7 @@ async function fetchRandomWord(keyword) {
                     wordCache.push(json.data[randomIndexes.pop()])
                 }
                 // store words to file in case next run is offline
-                let fm = FileManager.iCloud()
+                let fm = FileManager.local()
                 let offlinePath = fm.joinPath(fm.documentsDirectory(), 'Random Jisho Words')
                 if(!fm.fileExists(offlinePath)) {
                     fm.createDirectory(offlinePath)
@@ -181,17 +190,22 @@ async function fetchRandomWord(keyword) {
                 fm.writeString(fm.joinPath(offlinePath, ('words-' + keyword + '.json')), JSON.stringify(wordCache))
                 return wordCache.pop()
             } else {
-                throw Error('Data was not populated, empty page and no file?')
+                throw Error('Data was not populated, empty page?')
             }
         } catch { /* nothing, used for retries */ }
     }
     // might be offline, try loading from file
-    let fm = FileManager.iCloud()
+    let fm = FileManager.local()
     let offlinePath = fm.joinPath(fm.documentsDirectory(), 'Random Jisho Words')
-    wordCache = JSON.parse(fm.readString(fm.joinPath(offlinePath, ('words-' + keyword + '.json'))))
+    let filePath = fm.joinPath(offlinePath, ('words-' + keyword + '.json'));
+    if(fm.fileExists(filePath)) {
+        wordCache = JSON.parse(fm.readString(filePath))
+    }
     if(wordCache && wordCache.length > 0) {
         return wordCache.pop()
-    }
+    } 
+
+    // return undefined otherwise
 }
 
 function pickDefinition(randomWord) {
