@@ -1,5 +1,5 @@
 # Random Jisho Word Widget
-iOS 14 widget to display random words from a jisho.org search (e.g. a selected JLPT grade).  Powered by jisho.org and Scriptable
+iOS 14 widget to display random words from a jisho.org search (e.g. a selected JLPT grade).  Powered by [jisho.org](https://jisho.org) and [Scriptable](https://apps.apple.com/us/app/scriptable/id1405459188)
 
 ![Widget overview](overview.png)
 
@@ -30,4 +30,4 @@ An iOS >[Shortcut](https://www.icloud.com/shortcuts/9f4188a6ccc5440b82832e2d5bee
 Feel free to adjust the search at any time by modifying the widget and entering a new Parameter.  If you'd like to resize the widget, it needs to be removed and re-added.  Colors used can be easily changed by modifying the script content inside Scriptable.
 
 ## Acknowledgments
-Many thanks to [MaximiliumM](https://github.com/MaximiliumM) for publishing [this widget](https://github.com/MaximiliumM/JapaneseWidget) which performs a very similar function.  I wanted an app to display a wider variety of words with more open-ended configuration and was able to use their code as a starting point.  I also would like to express gratitude to all of the contributors to jisho.org, including its authors and everyone who curates the data it links us to.  It is a wonderful tool.
+Many thanks to [MaximiliumM](https://github.com/MaximiliumM) for publishing [this widget](https://github.com/MaximiliumM/JapaneseWidget) which performs a very similar function.  I wanted an app to display a wider variety of words with more open-ended configuration and was able to use their code as a starting point.  I also would like to express gratitude to all of the contributors to jisho.org, including its authors and everyone who curates the data it links us to.  It is a wonderful tool.  If you'd like to access the Jisho.org API yourself you can find a lot of discussion about it [here.](https://jisho.org/forum/54fefc1f6e73340b1f160000-is-there-any-kind-of-search-api)
