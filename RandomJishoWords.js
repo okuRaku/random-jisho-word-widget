@@ -51,13 +51,13 @@ async function createWidget() {
     const BOX_WIDTH = (widgetFamily => {
         switch (widgetFamily) {
             case 'small':
-                return 170 * SCREEN_SCALE_FACTOR;
+                return 170;
             case 'medium':
-                return 185 * SCREEN_SCALE_FACTOR;
+                return 185;
             case 'large':
-                return 182 * SCREEN_SCALE_FACTOR;
+                return 182;
             default:
-                return 170 * SCREEN_SCALE_FACTOR;
+                return 170;
         }
     })(config.widgetFamily);
     const BOX_HEIGHT = (widgetFamily => {
@@ -79,7 +79,7 @@ async function createWidget() {
     upperLeftOuter.setPadding(4, 4, 4, 4)
     upperLeftOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
     upperLeftOuter.backgroundColor = Color.dynamic(new Color(UPPER_LEFT_COLORS.light), new Color(UPPER_LEFT_COLORS.dark))
-    await buildTextStack(keyword, upperLeftOuter.addStack())
+    await buildTextStack(keyword, upperLeftOuter.addStack(), new Size(BOX_WIDTH * SCREEN_SCALE_FACTOR, BOX_HEIGHT * SCREEN_SCALE_FACTOR))
 
     // only added if running in medium/large mode, second word
     if (config.widgetFamily === 'medium' || config.widgetFamily === 'large') {
@@ -88,7 +88,7 @@ async function createWidget() {
         upperRightOuter.setPadding(4, 4, 4, 4)
         upperRightOuter.centerAlignContent()
         upperRightOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
-        await buildTextStack(keyword, upperRightOuter.addStack())
+        await buildTextStack(keyword, upperRightOuter.addStack(), new Size(BOX_WIDTH * SCREEN_SCALE_FACTOR, BOX_HEIGHT * SCREEN_SCALE_FACTOR))
 
     }
     // only added if running in large mode, third and fourth words
@@ -99,18 +99,21 @@ async function createWidget() {
         bottomLeftOuter.setPadding(4, 4, 4, 4)
         bottomLeftOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
         bottomLeftOuter.backgroundColor = Color.dynamic(new Color(BOTTOM_LEFT_COLORS.light), new Color(BOTTOM_LEFT_COLORS.dark))
-        await buildTextStack(keyword, bottomLeftOuter.addStack())
+        await buildTextStack(keyword, bottomLeftOuter.addStack(), new Size(BOX_WIDTH * SCREEN_SCALE_FACTOR, BOX_HEIGHT * SCREEN_SCALE_FACTOR))
         let bottomRightOuter = bottomRow.addStack()
         bottomRightOuter.centerAlignContent()
         bottomRightOuter.setPadding(4, 4, 4, 4)
         bottomRightOuter.size = new Size(BOX_WIDTH, BOX_HEIGHT)
         bottomRightOuter.backgroundColor = Color.dynamic(new Color(BOTTOM_RIGHT_COLORS.light), new Color(BOTTOM_RIGHT_COLORS.dark))
-        await buildTextStack(keyword, bottomRightOuter.addStack())
+        await buildTextStack(keyword, bottomRightOuter.addStack(), new Size(BOX_WIDTH * SCREEN_SCALE_FACTOR, BOX_HEIGHT * SCREEN_SCALE_FACTOR))
     }
     return w
 }
 
-async function buildTextStack(keyword, stack) {
+async function buildTextStack(keyword, stack, size) {
+    stack.size = size  // set text box a bit smaller to prevent text getting cut off
+    stack.layoutVertically()
+    let innerStack = stack.addStack()
     randomWord = await fetchRandomWord(keyword)
     // often there are more than one "words" matching a given result, without knowing for sure the best
     // we propose a heuristic to pick the one most likely to be applicable is the one with 
@@ -118,20 +121,20 @@ async function buildTextStack(keyword, stack) {
     senseIndex = pickDefinition(randomWord)
     const [readingText, wordText, englishText] = await extractTexts(randomWord, senseIndex)
     if(randomWord && randomWord.slug) {
-        stack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
+        innerStack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
     }
-    stack.layoutVertically()
-    let readingStack = stack.addStack()
+    innerStack.layoutVertically()
+    let readingStack = innerStack.addStack()
     readingStack.addSpacer()
     reading = readingStack.addText(readingText)
     readingStack.addSpacer()
     reading.font = Font.footnote()
-    let wordStack = stack.addStack()
+    let wordStack = innerStack.addStack()
     wordStack.addSpacer()
     word = wordStack.addText(wordText)
     wordStack.addSpacer()
     word.font = Font.title2()
-    let englishStack = stack.addStack()
+    let englishStack = innerStack.addStack()
     englishStack.addSpacer()
     english = englishStack.addText(englishText)
     englishStack.addSpacer()
