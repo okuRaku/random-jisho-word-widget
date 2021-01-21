@@ -29,5 +29,15 @@ An iOS >[Shortcut](https://www.icloud.com/shortcuts/9f4188a6ccc5440b82832e2d5bee
 ## Usage
 Feel free to adjust the search at any time by modifying the widget and entering a new Parameter.  If you'd like to resize the widget, it needs to be removed and re-added.  Colors used can be easily changed by modifying the script content inside Scriptable.
 
+jisho.org provides some very interesting and useful tags that you can set as your Parameter to see selected words on your home screen for practice.  The full list is [here](https://jisho.org/docs).  Some examples I picked that you might try:
+- ```#comp``` [Computer terms](https://jisho.org/search/%23words%20%23comp)
+- ```#bus``` [Business terms](https://jisho.org/search/%23words%20%23bus)
+- ```#counter``` [Counter words](https://jisho.org/search/%23words%20%23counter)
+- ```#id``` [Idiomatic expressions](https://jisho.org/search/%23words%20%23id)
+- ```#wasei``` [Wasei, words made in Japan](https://jisho.org/search/%23words%20%23wasei)
+- ```#station``` [Railway stations](https://jisho.org/search/%23words%20%23station)
+- ```#on-mim``` [Onomatopoeic or mimetic word](https://jisho.org/search/%23words%20%23on-mim)
+- ```#yoji``` [Yojijukugo (four character compound)](https://jisho.org/search/%23words%20%23yoji)
+
 ## Acknowledgments
 Many thanks to [MaximiliumM](https://github.com/MaximiliumM) for publishing [this widget](https://github.com/MaximiliumM/JapaneseWidget) which performs a very similar function.  I wanted an app to display a wider variety of words with more open-ended configuration and was able to use their code as a starting point.  I also would like to express gratitude to all of the contributors to jisho.org, including its authors and everyone who curates the data it links us to.  It is a wonderful tool.  If you'd like to access the Jisho.org API yourself you can find a lot of discussion about it [here.](https://jisho.org/forum/54fefc1f6e73340b1f160000-is-there-any-kind-of-search-api)
