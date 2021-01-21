@@ -46,16 +46,18 @@ async function createWidget() {
     let keyword = args.widgetParameter || '#jlpt-n5'
 
 
+    // developed on a device reporting screenSize().width as 428
+    const SCREEN_SCALE_FACTOR = Device.screenSize().width / 428
     const BOX_WIDTH = (widgetFamily => {
         switch (widgetFamily) {
             case 'small':
-                return 170;
+                return 170 * SCREEN_SCALE_FACTOR;
             case 'medium':
-                return 185;
+                return 185 * SCREEN_SCALE_FACTOR;
             case 'large':
-                return 182;
+                return 182 * SCREEN_SCALE_FACTOR;
             default:
-                return 170;
+                return 170 * SCREEN_SCALE_FACTOR;
         }
     })(config.widgetFamily);
     const BOX_HEIGHT = (widgetFamily => {
@@ -107,39 +109,51 @@ async function createWidget() {
     }
     return w
 }
+
 async function buildTextStack(keyword, stack) {
     randomWord = await fetchRandomWord(keyword)
     // often there are more than one "words" matching a given result, without knowing for sure the best
     // we propose a heuristic to pick the one most likely to be applicable is the one with 
     // multiple english definitions.  This helps avoid proper names from appearing.  Area for more research.
     senseIndex = pickDefinition(randomWord)
-    const [readingText, wordText, englishText] = ((word, sense) => {
-        if(!word || !word.senses || !word.senses[sense] 
-            || !word.senses[sense].english_definitions
-            || !word.senses[sense].parts_of_speech
-            || !word.japanese || word.japanese.length === 0) {
-            let placeholder = word? (word.slug || '') : ''
-            return ['',placeholder,'No data available.  Check parameter']
-
-        } else if (word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
-            return [word.senses[sense].english_definitions[0],
-                    word.japanese[0].word ? word.japanese[0].word : word.japanese[0].reading,
-                    'Wikipedia definition']
-        } else {
-            return [word.japanese[0].reading,
-                    word.japanese[0].word ? word.japanese[0].word : word.slug,
-                    word.senses[sense].english_definitions.join('; ')]
-        } //TODO might need more cases depending on what searches users do
-    })(randomWord, senseIndex)
+    const [readingText, wordText, englishText] = await extractTexts(randomWord, senseIndex)
     if(randomWord && randomWord.slug) {
         stack.url = 'https://jisho.org/word/' + encodeURIComponent(randomWord.slug)
     }
     stack.layoutVertically()
-    reading = stack.addText(readingText)
+    let readingStack = stack.addStack()
+    readingStack.addSpacer()
+    reading = readingStack.addText(readingText)
+    readingStack.addSpacer()
     reading.font = Font.footnote()
-    word = stack.addText(wordText)
+    let wordStack = stack.addStack()
+    wordStack.addSpacer()
+    word = wordStack.addText(wordText)
+    wordStack.addSpacer()
     word.font = Font.title2()
-    stack.addText(englishText)
+    let englishStack = stack.addStack()
+    englishStack.addSpacer()
+    english = englishStack.addText(englishText)
+    englishStack.addSpacer()
+    english.centerAlignText()
+}
+async function extractTexts(word, sense) {
+    if(!word || !word.senses || !word.senses[sense] 
+        || !word.senses[sense].english_definitions
+        || !word.senses[sense].parts_of_speech
+        || !word.japanese || word.japanese.length === 0) {
+        let placeholder = word? (word.slug || '') : ''
+        return ['',placeholder,'No data available.  Check parameter']
+
+    } else if (word.senses[sense].parts_of_speech[0] === 'Wikipedia definition') {
+        return [word.senses[sense].english_definitions[0],
+                word.japanese[0].word ? word.japanese[0].word : word.japanese[0].reading,
+                'Wikipedia definition']
+    } else {
+        return [word.japanese[0].reading,
+                word.japanese[0].word ? word.japanese[0].word : word.slug,
+                word.senses[sense].english_definitions.join('; ')]
+    } //TODO might need more cases depending on what searches users do
 }
 async function fetchRandomWord(keyword) {
     if (wordCache.length > 0) return wordCache.pop()
